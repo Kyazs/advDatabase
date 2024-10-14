@@ -1,5 +1,5 @@
 CREATE DATABASE IF NOT EXISTS vmsJAIL;
-
+-- drop database vmsjail;
 USE vmsJAIL;
 
 CREATE TABLE IF NOT EXISTS Visitors (
@@ -8,11 +8,14 @@ CREATE TABLE IF NOT EXISTS Visitors (
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE,
     contact_number VARCHAR(15),
+    gender ENUM('male', 'female', 'other') NOT NULL,
     date_of_birth DATE,
-    address_street VARCHAR(255),
-    address_city VARCHAR(100),
-    address_state VARCHAR(100),
-    address_zip VARCHAR(10),
+    street VARCHAR(255),
+    city VARCHAR(100),
+    barangay VARCHAR(100),
+    province VARCHAR(100),
+    zip VARCHAR(10),
+    country VARCHAR(100),
     id_document_path TEXT,
     registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_verified BOOLEAN DEFAULT FALSE

@@ -5,7 +5,7 @@ class Database{
     private $host = 'localhost';
     private $username = 'root';
     private $password = '';
-    private $dbname = '';
+    private $dbname = 'vmsJAIL';
 
     protected $connection;
 
