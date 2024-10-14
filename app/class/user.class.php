@@ -121,4 +121,32 @@ class User
         $stmt->bindParam(':visitor_id', $id);
         return $stmt->execute();
     }
+
+    function login($username, $password)
+    {
+        $sql = "SELECT * FROM visitorcredentials WHERE username = :username LIMIT 1;";
+        $query = $this->db->connect()->prepare($sql);
+
+        $query->bindParam('username', $username);
+
+        if ($query->execute()) {
+            $data = $query->fetch();
+            if ($data && password_verify($password, $data['password_hash'])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function fetch($username){
+        $sql = "SELECT * FROM visitorcredentials WHERE username = :username LIMIT 1;";
+        $query = $this->db->connect()->prepare($sql);
+
+        $query->bindParam(':username', $username);
+
+        if ($query->execute()) {
+            return $query->fetch();
+        }
+        return false;
+    }
 }

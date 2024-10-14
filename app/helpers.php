@@ -1,16 +1,47 @@
 <?php
-
+require_once __DIR__ . '/class/user.class.php';
 // The clean_input function is used to sanitize user input.
-function clean_input($input){
-    // trim() removes any whitespace or predefined characters from both sides of a string.
+function clean_input($input)
+{
     $input = trim($input);
-    
-    // stripslashes() removes any backslashes from the input.
     $input = stripslashes($input);
-    
-    // htmlspecialchars() converts special characters to HTML entities to prevent XSS attacks.
     $input = htmlspecialchars($input);
-    
-    // Return the sanitized input.
     return $input;
+}
+
+function auth()
+{
+    session_start();
+
+    $accountObj = new User();
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $username = clean_input(($_POST['username']));
+        $password = clean_input($_POST['password']);
+
+        if ($accountObj->login($username, $password)) {
+            $data = $accountObj->fetch($username);
+            $_SESSION['account'] = $data;
+            header('location: /resources/visitor/accDashboard.php');
+        } else {
+            $loginErr = 'Invalid username/password';
+        }
+    } else {
+        if (isset($_SESSION['account'])) {
+            if ($_SESSION['account']['is_staff']) {
+                header('location: /resources/visitor/accDashboard.php');
+            }
+        }
+    }
+}
+
+function logout()
+{
+    session_start();
+    session_destroy();
+    header('Location: /public/index.php');
+}
+
+function redirect($url)
+{
+    header('Location: ' . $url);
 }
