@@ -15,7 +15,7 @@ CREATE TABLE Visitors (
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    contact_number VARCHAR(20),
+    contact_number VARCHAR(20) UNIQUE,
     gender_id INT,
     date_of_birth DATE,
     address_street VARCHAR(255),
@@ -24,9 +24,11 @@ CREATE TABLE Visitors (
     address_zip VARCHAR(20),
     id_document_path TEXT,
     registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_verified BOOLEAN DEFAULT FALSE,
     is_deleted BOOLEAN DEFAULT FALSE, -- Renamed is_delete to is_deleted,
     FOREIGN KEY (gender_id) REFERENCES Gender(gender_id)
 );
+
 
 -- Visitor credentials
 CREATE TABLE VisitorCredentials (
