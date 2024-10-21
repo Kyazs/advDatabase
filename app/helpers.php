@@ -11,13 +11,11 @@ function clean_input($input)
 
 function auth()
 {
-    session_start();
-
     $accountObj = new User();
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $username = clean_input(($_POST['username']));
         $password = clean_input($_POST['password']);
-
+        session_start();
         if ($accountObj->login($username, $password)) {
             $data = $accountObj->fetch($username);
             $_SESSION['account'] = $data;
@@ -26,8 +24,11 @@ function auth()
             $loginErr = 'Invalid username/password';
         }
     } else {
+        session_start();
         if (isset($_SESSION['account'])) {
             if ($_SESSION['account']['is_staff']) {
+                header('location: /resources/admin/mDashboard.php');
+            } else {
                 header('location: /resources/visitor/accDashboard.php');
             }
         }
