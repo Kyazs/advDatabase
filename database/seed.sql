@@ -2,12 +2,12 @@
 
 
 -- 1. Insert Sample Visitors
-INSERT INTO Visitors (first_name, last_name, email, contact_number, date_of_birth, address_street, address_city, address_state, address_zip, id_document_path, is_verified)
+INSERT INTO Visitors (first_name, last_name, email, contact_number, gender_id, date_of_birth, address_street, address_city, address_state, address_zip, id_document_path, is_verified)
 VALUES 
-('John', 'Doe', 'john.doe@example.com', '1234567890', '1980-01-15', '123 Main St', 'Cityville', 'StateA', '12345', 'uploads/ids/john_doe_id.pdf', TRUE),
-('Jane', 'Smith', 'jane.smith@example.com', '0987654321', '1990-05-22', '456 Maple Ave', 'Townsville', 'StateB', '67890', 'uploads/ids/jane_smith_id.pdf', TRUE),
-('Tom', 'Johnson', 'tom.johnson@example.com', '2345678901', '1985-09-30', '789 Oak Rd', 'Villageville', 'StateC', '54321', 'uploads/ids/tom_johnson_id.pdf', FALSE),
-('Emily', 'Williams', 'emily.williams@example.com', '3456789012', '1995-07-10', '321 Pine St', 'Hamletville', 'StateD', '98765', 'uploads/ids/emily_williams_id.pdf', TRUE);
+('John', 'Doe', 'john.doe@example.com', '1234567890','1' ,'1980-01-15', '123 Main St', 'Cityville', 'StateA', '12345', 'uploads/ids/john_doe_id.pdf', TRUE),
+('Jane', 'Smith', 'jane.smith@example.com', '0987654321', '2' ,'1990-05-22', '456 Maple Ave', 'Townsville', 'StateB', '67890', 'uploads/ids/jane_smith_id.pdf', TRUE),
+('Tom', 'Johnson', 'tom.johnson@example.com', '2345678901', '3' ,'1985-09-30', '789 Oak Rd', 'Villageville', 'StateC', '54321', 'uploads/ids/tom_johnson_id.pdf', FALSE),
+('Emily', 'Williams', 'emily.williams@example.com', '3456789012', '4', '1995-07-10', '321 Pine St', 'Hamletville', 'StateD', '98765', 'uploads/ids/emily_williams_id.pdf', TRUE);
 
 -- 2. Insert Sample Visitor Credentials
 INSERT INTO VisitorCredentials (visitor_id, username, password_hash)
@@ -34,12 +34,12 @@ VALUES
 ('Susan', 'Taylor', 'IN98765', 'D-10');
 
 -- 5. Insert Sample Visits
-INSERT INTO Visits (visitor_id, inmate_id, check_in_time, check_out_time, visit_status, visit_duration)
+INSERT INTO Visits (visitor_id, inmate_id, check_in_time, check_out_time, visit_status)
 VALUES 
-(1, 1, '2024-10-01 09:00:00', '2024-10-01 10:00:00', 'completed', 60),
-(2, 2, '2024-10-02 14:30:00', '2024-10-02 15:00:00', 'completed', 30),
-(3, 3, '2024-10-03 11:00:00', NULL, 'in progress', NULL),
-(4, 4, '2024-10-04 16:00:00', '2024-10-04 17:30:00', 'completed', 90);
+(1, 1, '2024-10-01 09:00:00', '2024-10-01 10:00:00', '2'),
+(2, 2, '2024-10-02 14:30:00', '2024-10-02 15:00:00', '2'),
+(3, 3, '2024-10-03 11:00:00', NULL, '1'),
+(4, 4, '2024-10-04 16:00:00', '2024-10-04 17:30:00', '2');
 
 -- 6. Insert Sample Blacklist Entries
 INSERT INTO Blacklist (visitor_id, reason)
@@ -47,16 +47,16 @@ VALUES
 (3, 'Attempted to bring contraband into the facility');
 
 -- 7. Insert Sample Users (Admins/Moderators)
-INSERT INTO Users (username, password_hash, role)
+INSERT INTO Users (username, password_hash, role_id)
 VALUES 
-('admin', '$2y$10$Ls5hEB9FZ/sbvO/PnCZeb.gPvZ1WSv4f3ReJD8fFsGmCwZHE6duwW', 'superadmin'), -- Password hash for 'adminpass'
-('mod1', '$2y$10$XsHZaJx0GHGeAEb4hHCU7eavLqCwkkL47ZLoUODZV/A0FghXOR.SS', 'moderator'); -- Password hash for 'modpass'
+('admin', '$2y$10$Ls5hEB9FZ/sbvO/PnCZeb.gPvZ1WSv4f3ReJD8fFsGmCwZHE6duwW', '1'), -- Password hash for 'adminpass'
+('mod1', '$2y$10$XsHZaJx0GHGeAEb4hHCU7eavLqCwkkL47ZLoUODZV/A0FghXOR.SS', '2'); -- Password hash for 'modpass'
 
 -- 8. Insert Sample Audit Logs
-INSERT INTO AuditLog (user_id, action_type, target_table, target_record_id, details)
+INSERT INTO AuditLog (timestamp, user_id, action_type_id, visitor_id, inmate_id, visit_id, details)
 VALUES 
-(1, 'visitor_registered', 'Visitors', 1, 'Registered visitor John Doe'),
-(2, 'visitor_blacklisted', 'Blacklist', 3, 'Tom Johnson was blacklisted for contraband'),
-(1, 'inmate_added', 'Inmates', 1, 'Inmate Michael Brown added'),
-(2, 'visit_started', 'Visits', 3, 'Visit started for Tom Johnson');
+(NOW(), NULL, 1, 1, NULL, 10, 'Visitor 1 checked in for visit.'),
+(NOW(), NULL, 2, NULL, 2, 12, 'Inmate 2 received a visit.'),
+(NOW(), NULL, 3, 3, 3, 9, 'Visitor 3 attempted to visit Inmate 3 but was denied.'),
+(NOW(), 2, 5, NULL, NULL, NULL, 'System maintenance performed on Visit 3.');
 
