@@ -1,30 +1,51 @@
 <?php
+ob_start();
 require_once __DIR__ . '/../class/user.class.php';
 require_once __DIR__ . '/../helpers.php';
-$username = $password = $visitor_id = $first_name = $last_name = $email = $contact_number = $date_of_birth = $province = $barangay = $street = $city = $zip = $id_document_path = $registration_date = $gender = $country = '';
+$conPassword = $terms = $username = $password = $visitor_id = $first_name = $last_name = $email = $contact_number = $date_of_birth = $province = $barangay = $street = $city = $zip = $id_document_path = $id_type = $registration_date = $gender = $country = '';
 
-$error_password = $error_username = $error_visitor_id = $error_first_name = $error_last_name = $error_email = $error_contact_number = $error_date_of_birth = $error_address_street = $error_address_city = $error_address_state = $error_address_zip = $error_id_document_path = $error_registration_date = $error_is_verified = $error_gender = $error_country = '';
+$error_terms = $error_password = $error_id_type = $usernameExists = $emailExists = $contactExists = $error_username = $error_visitor_id = $error_first_name = $error_last_name = $error_email = $error_contact_number = $error_date_of_birth = $error_address_street = $error_address_city = $error_address_state = $error_address_zip = $error_id_document_path = $error_registration_date = $error_is_verified = $error_gender = $error_country = '';
 
 $obj = new User();
+$gender = $obj->fetchGender();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $first_name = $_POST['firstName'];
-    $last_name = $_POST['lastName'];
-    $email = $_POST['email'];
-    $contact_number = $_POST['contactNumber'];
-    $date_of_birth = $_POST['birthdate'];
-    $street = $_POST['bldg'];
-    $city = $_POST['city'];
-    $province = $_POST['province'];
-    $barangay = $_POST['barangay'];
-    $zip = $_POST['zip'];
-    $username = $_POST['username'];
-    $gender = $_POST['gender'] ?? '';
-    $password = $_POST['password'];
-    $country = $_POST['country'];
-    $id_document_path = $_POST['idDocumentPath'] ?? '';
+    $first_name = clean_input($_POST['firstName'] ?? '');
+    $last_name = clean_input($_POST['lastName'] ?? '');
+    $email = clean_input($_POST['email'] ?? '');
+    $contact_number = clean_input($_POST['contactNumber'] ?? '');
+    $date_of_birth = clean_input($_POST['birthdate'] ?? '');
+    $street = clean_input($_POST['bldg'] ?? '');
+    $city = clean_input($_POST['city'] ?? '');
+    $province = clean_input($_POST['province'] ?? '');
+    $barangay = clean_input($_POST['barangay'] ?? '');
+    $zip = clean_input($_POST['zip'] ?? '');
+    $username = clean_input($_POST['username'] ?? '');
+    $gender = clean_input($_POST['gender'] ?? '');
+    $password = clean_input($_POST['password'] ?? '');
+    $country = clean_input($_POST['country'] ?? '');
+    $id_type = clean_input($_POST['id_type'] ?? '');
+    $id_document_path = clean_input($_POST['idDocumentPath'] ?? '');
+    $terms = clean_input($_POST['terms'] ?? '');
+    $conPassword = clean_input($_POST['conPassword']);
+
+    $emailExists = $obj->emailExists($_POST['email']);
+    $contactExists = $obj->numberExists($_POST['contactNumber']);
+    $usernameExists = $obj->usernameExists($_POST['username']);
 
     // Validate inputs
 
+    if (empty($terms)) {
+        $error_terms = "You must agree to the terms and conditions to continue";
+    }
+    if (!empty($emailExists)) {
+        $error_email = $emailExists;
+    }
+    if (!empty($contactExists)) {
+        $error_contact_number = $contactExists;
+    }
+    if (!empty($usernameExists)){
+        $error_username = $usernameExists;
+    }
     if (empty($first_name)) {
         $error_first_name = "First name is required";
     }
@@ -36,6 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     if (empty($contact_number)) {
         $error_contact_number = "Contact number is required";
+    }
+    if (!is_numeric($contact_number)) {
+        $error_contact_number = "Contact number must be numeric";
     }
     if (empty($date_of_birth)) {
         $error_date_of_birth = "Date of birth is required";
@@ -66,13 +90,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($country)) {
         $error_country = "Country is required";
     }
+    if (empty($id_type)){
+        $error_id_type = "Type of ID is required";
+    }
+    if ($conPassword != $password) {
+        $error_password = "Passwords do not match";
+    }
 
     // If no errors, proceed to register the user
     if (
         empty($error_visitor_id) && empty($error_first_name) && empty($error_last_name) && empty($error_email)
         && empty($error_contact_number) && empty($error_date_of_birth) && empty($error_address_street) && empty($error_address_city)
-        && empty($error_address_state) && empty($error_address_zip) && empty($error_registration_date)
-        && empty($error_password) && empty($error_username) && empty($error_gender) && empty($error_country)
+        && empty($error_address_state) && empty($error_address_zip) && empty($error_registration_date) && empty($error_id_type) && empty($error_terms)
+        && empty($error_password) && empty($error_username) && empty($error_gender) && empty($error_country) && empty($emailExists) && empty($contactExists)
     ) {
         $obj->first_name = $first_name;
         $obj->last_name = $last_name;
@@ -87,11 +117,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $obj->gender = $gender;
         $obj->country = $country;
         $obj->username = $username;
+        $obj->id_type = $id_type;
         $obj->password = password_hash($password, PASSWORD_DEFAULT);
         if ($obj->register()) {
-            header('Location: ' . __DIR__ . '/asd');
+            echo "User Created";
+            exit();
         } else {
             echo "Error registering user";
         }
     }
+    else {
+        echo "<script>console.log('Form not submitted');</script>";
+    }
 }
+ob_end_flush();

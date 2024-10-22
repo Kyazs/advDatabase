@@ -32,7 +32,7 @@ require_once __DIR__ . '/../../app/validation/register.php';
 
     <div class="form-container">
         <h3>Personal Information</h3>
-        <form action="" method="POST">
+        <form action="../../app/validation/register.php" method="POST">
 
             <label for="firstName">First Name <span class="error">*</span></label>
             <input type="text" id="firstName" name="firstName" placeholder="First Name" value="<?= $first_name ?>">
@@ -52,7 +52,7 @@ require_once __DIR__ . '/../../app/validation/register.php';
             <?php endif; ?>
 
             <label for="birthdate">Birthdate (MM/DD/YY) <span class="error">*</span></label>
-            <input type="date" id="birthdate" name="birthdate" value="<?= $birthdate ?>">
+            <input type="date" id="birthdate" name="birthdate" value="<?= $date_of_birth ?>">
             <?php if (!empty($error_birthdate)): ?>
                 <span class="error"><?= $error_birthdate ?></span><br>
             <?php endif; ?>
@@ -63,15 +63,14 @@ require_once __DIR__ . '/../../app/validation/register.php';
                 <span class="error"><?= $error_email ?></span><br>
             <?php endif; ?>
 
-            <label for="gender">Gender</label>
-            <div class="gender-group">
-                <input type="radio" id="male" name="gender" value="male" <?= isset($gender) && $gender == 'male' ? 'checked' : '' ?>>
-                <label for="male">Male <span class="error">*</span></label>
-                <div class="female-group">
-                    <input type="radio" id="female" name="gender" value="female" <?= isset($gender) && $gender == 'female' ? 'checked' : '' ?>>
-                    <label for="female">Female <span class="error">*</span></label>
-                </div>
-            </div>
+            <label for="gender">Gender <span class="error">*</span></label>
+            <select name="gender" id="gender">
+                <option value="" disabled <?= $gender == '' ? 'selected' : '' ?>>Select</option>
+                <option value="1" <?= $gender == '1' ? 'selected' : '' ?>>Male</option>
+                <option value="2" <?= $gender == '2' ? 'selected' : '' ?>>Female</option>
+                <option value="3" <?= $gender == '3' ? 'selected' : '' ?>>Non-Binary</option>
+                <option value="4" <?= $gender == '4' ? 'selected' : '' ?>>Other</option>
+            </select>
             <?php if (!empty($error_gender)): ?>
                 <span class="error"><?= $error_gender ?></span><br>
             <?php endif; ?>
@@ -133,19 +132,20 @@ require_once __DIR__ . '/../../app/validation/register.php';
                 <span class="error"><?= $error_conPassword ?></span><br>
             <?php endif; ?>
 
+            <h3>Visitor Identification</h3>
+
             <div class="select-container">
-                <select name="id-type" id="id-type">
+                <select name="id_type" id="id_type">
                     <option value="" disabled selected>Type of ID</option>
-                    <option value="passport">Passport</option>
-                    <option value="driver-license">Driver's License</option>
-                    <option value="national-id">National ID</option>
+                    <option value="1" <?= $id_type == '1' ? 'selected' : '' ?>>Passport</option>
+                    <option value="2" <?= $id_type == '2' ? 'selected' : '' ?>>Driver's License</option>
+                    <option value="3" <?= $id_type == '3' ? 'selected' : '' ?>>National ID</option>
+                    <option value="4" <?= $id_type == '4' ? 'selected' : '' ?>>Other</option>
                 </select>
                 <?php if (!empty($error_id_type)): ?>
                     <span class="error"><?= $error_id_type ?></span><br>
                 <?php endif; ?>
             </div>
-
-            <h3>Visitor Identification</h3>
             <div class="upload-container">
                 <label for="valid-id" class="upload-label"><span class="error">*</span>
                     <span>Upload Valid ID</span>
@@ -169,7 +169,7 @@ require_once __DIR__ . '/../../app/validation/register.php';
                     Your data will be handled according to our Privacy Policy. We reserve the right to modify these terms at any time.
                 </p>
                 <label>
-                    <input type="checkbox" name="terms">
+                    <input type="checkbox" name="terms" required>
                     I agree to the Terms and Conditions
                 </label>
                 <?php if (!empty($error_terms)): ?>
