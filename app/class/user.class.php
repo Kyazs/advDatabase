@@ -19,6 +19,7 @@ class User
     public $username = '';
     public $gender = '';
     public $password = '';
+    public $id_type = '';
 
     protected $db;
 
@@ -27,22 +28,45 @@ class User
         $this->db = new Database();
     }
 
+    function emailExists($email){
+        $sql = "SELECT COUNT(*) FROM visitors WHERE email = :email";
+        $stmt = $this->db->connect()->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        $email_exists = $stmt->fetchcolumn();
+
+        if($email_exists > 0){
+            return 'Email Already In Use';
+        }
+    }
+
+    function numberExists($number){
+        $sql = "SELECT COUNT(*) FROM visitors WHERE contact_number = :contact_number";
+        $stmt = $this->db->connect()->prepare($sql);
+        $stmt->bindParam(':contact_number', $number);
+        $stmt->execute();
+        $number_Exists = $stmt->fetchcolumn();
+
+        if($number_Exists > 0){
+            return 'Contact Number Already Exists';
+        }
+    }
+
+    function usernameExists($user){
+        $sql = "SELECT COUNT(*) FROM visitorcredentials where username = :username;";
+        $stmt = $this->db->connect()->prepare($sql);
+        $stmt->bindParam(':username', $user);
+        $stmt->execute();
+        $usernameExists = $stmt->fetchcolumn();
+        if($usernameExists > 0){
+            return 'Username is Already In Use';
+        }
+    }
+
     public function register()
     {
-        // Check if email already exists
-        $checkEmailSql = "SELECT COUNT(*) FROM visitors WHERE email = :email";
-        $checkEmailStmt = $this->db->connect()->prepare($checkEmailSql);
-        $checkEmailStmt->bindParam(':email', $this->email);
-        $checkEmailStmt->execute();
-        $emailExists = $checkEmailStmt->fetchColumn();
-
-        if ($emailExists > 0) {
-            echo "Error: Email already exists.";
-            return header('Location: ' . __DIR__ . '/../../resources/visitor/register.php');
-        }
-
-        $sql = "INSERT INTO visitors (first_name, last_name, email, contact_number, date_of_birth, street, city, barangay, province, zip, country, gender) 
-            VALUES (:first_name, :last_name, :email, :contact_number, :date_of_birth, :street, :city, :barangay, :province, :zip, :country, :gender);";
+        $sql = "INSERT INTO visitors (first_name, last_name, email, contact_number, date_of_birth, address_street, address_city, address_barangay, address_province, address_zip, country, gender_id, id_type) 
+            VALUES (:first_name, :last_name, :email, :contact_number, :date_of_birth, :street, :city, :barangay, :province, :zip, :country, :gender, :id_type);";
         $stmt = $this->db->connect()->prepare($sql);
         $stmt->bindParam(':first_name', $this->first_name);
         $stmt->bindParam(':last_name', $this->last_name);
@@ -56,6 +80,7 @@ class User
         $stmt->bindParam(':zip', $this->zip);
         $stmt->bindParam(':country', $this->country);
         $stmt->bindParam(':gender', $this->gender);
+        $stmt->bindParam(':id_type', $this->id_type);
 
         // Execute the visitor insert query
         if ($stmt->execute()) {
@@ -72,8 +97,8 @@ class User
 
             // Execute the credentials insert query
             if ($stmt2->execute()) {
-                echo "User created successfully.";
-                header('Location: ' . __DIR__ . '/../../public/index.php');
+                header('Location: ../../public/login.php');
+                exit();
             } else {
                 echo "Error creating user credentials: ";
             }
@@ -93,7 +118,7 @@ class User
 
     public function updateUser($id)
     {
-        $sql = "UPDATE visitors SET first_name = :first_name, last_name = :last_name, email = :email, contact_number = :contact_number, date_of_birth = :date_of_birth, street = :street, city = :city, barangay = :barangay, province = :province, zip = :zip, country = :country, id_document_path = :id_document_path, gender = :gender WHERE visitor_id = :visitor_id";
+        $sql = "UPDATE visitors SET first_name = :first_name, last_name = :last_name, email = :email, contact_number = :contact_number, date_of_birth = :date_of_birth, street = :street, city = :city, barangay = :barangay, province = :province, zip = :zip, country = :country, id_document_path = :id_document_path, gender_id = :gender WHERE visitor_id = :visitor_id";
 
         $stmt = $this->db->connect()->prepare($sql);
 
@@ -135,7 +160,8 @@ class User
                 return true;
             }
         }
-        return false;
+
+        return $php_errormsg = 'invalid username/password';
     }
 
     function fetch($username){
@@ -149,4 +175,14 @@ class User
         }
         return false;
     }
+
+    function fetchGender(){
+        $sql = "SELECT * FROM gender;";
+        $query = $this->db->connect()->prepare($sql);
+        if($query->execute()){
+            return $query->fetchAll();
+        }
+        return false;
+    }
 }
+
