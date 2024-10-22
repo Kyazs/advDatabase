@@ -3,14 +3,20 @@ CREATE DATABASE IF NOT EXISTS vmsJAIL;
 -- DROP DATABASE IF EXISTS vmsJAIL;
 USE vmsJAIL;
 
-CREATE TABLE Gender (
+CREATE TABLE IF NOT EXISTS Gender (
     gender_id INT AUTO_INCREMENT PRIMARY KEY,
     gender_name VARCHAR(50) NOT NULL UNIQUE
 );
 INSERT INTO Gender (gender_name) VALUES ('Male'), ('Female'), ('Non-binary'), ('Other');
 
+CREATE TABLE IF NOT EXISTS id_types (
+    id_type_id INT AUTO_INCREMENT PRIMARY KEY,
+    id_type_name VARCHAR(50) NOT NULL UNIQUE
+);
+
+INSERT INTO id_types (id_type_name) VALUES ('Passport'), ('Driver''s License'), ('National ID'), ('Other');
 -- Visitors table
-CREATE TABLE Visitors (
+CREATE TABLE IF NOT EXISTS Visitors (
     visitor_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
@@ -18,20 +24,24 @@ CREATE TABLE Visitors (
     contact_number VARCHAR(20) UNIQUE,
     gender_id INT,
     date_of_birth DATE,
+    country VARCHAR(20), -- Added country column
     address_street VARCHAR(255),
     address_city VARCHAR(100),
-    address_state VARCHAR(100),
+    address_province VARCHAR(100),
+    address_barangay VARCHAR(100),
     address_zip VARCHAR(20),
+    id_type INT,
     id_document_path TEXT,
     registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_verified BOOLEAN DEFAULT FALSE,
     is_deleted BOOLEAN DEFAULT FALSE, -- Renamed is_delete to is_deleted,
-    FOREIGN KEY (gender_id) REFERENCES Gender(gender_id)
+    FOREIGN KEY (gender_id) REFERENCES Gender(gender_id),
+    FOREIGN KEY (id_type) REFERENCES id_types(id_type_id)
 );
 
 
 -- Visitor credentials
-CREATE TABLE VisitorCredentials (
+CREATE TABLE IF NOT EXISTS VisitorCredentials (
     credential_id INT AUTO_INCREMENT PRIMARY KEY, -- Changed to allow multiple credentials
     visitor_id INT,
     username VARCHAR(100) UNIQUE NOT NULL,
@@ -41,7 +51,7 @@ CREATE TABLE VisitorCredentials (
 );
 
 -- Separate table for QR code information
-CREATE TABLE VisitorQRCode (
+CREATE TABLE IF NOT EXISTS VisitorQRCode (
     qr_id INT AUTO_INCREMENT PRIMARY KEY, -- Changed to allow multiple QR codes
     visitor_id INT,
     qr_code VARCHAR(255) UNIQUE NOT NULL,
@@ -50,7 +60,7 @@ CREATE TABLE VisitorQRCode (
 );
 
 -- Inmates table (unchanged)
-CREATE TABLE Inmates (
+CREATE TABLE IF NOT EXISTS Inmates (
     inmate_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
@@ -59,7 +69,7 @@ CREATE TABLE Inmates (
 );
 
 -- Visit statuses
-CREATE TABLE VisitStatus (
+CREATE TABLE IF NOT EXISTS VisitStatus (
     status_id INT AUTO_INCREMENT PRIMARY KEY,
     status_name VARCHAR(50) NOT NULL UNIQUE
 );
@@ -71,7 +81,7 @@ VALUES ('in progress'),
     ('cancelled');
 
 -- Visits table with calculated visit_duration in application logic
-CREATE TABLE Visits (
+CREATE TABLE IF NOT EXISTS Visits (
     visit_id INT AUTO_INCREMENT PRIMARY KEY,
     visitor_id INT,
     inmate_id INT,
@@ -85,7 +95,7 @@ CREATE TABLE Visits (
 );
 
 -- Blacklist table
-CREATE TABLE Blacklist (
+CREATE TABLE IF NOT EXISTS Blacklist (
     blacklist_id INT AUTO_INCREMENT PRIMARY KEY,
     visitor_id INT,
     reason TEXT,
@@ -95,7 +105,7 @@ CREATE TABLE Blacklist (
 );
 
 -- Roles table
-CREATE TABLE Roles (
+CREATE TABLE IF NOT EXISTS Roles (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
     role_name VARCHAR(50) NOT NULL UNIQUE
 );
@@ -103,7 +113,7 @@ CREATE TABLE Roles (
 INSERT INTO Roles (role_name) VALUES ('superadmin'), ('moderator');
 
 -- Users table
-CREATE TABLE Users (
+CREATE TABLE IF NOT EXISTS Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
@@ -112,7 +122,7 @@ CREATE TABLE Users (
 );
 
 -- Action types table
-CREATE TABLE ActionTypes (
+CREATE TABLE IF NOT EXISTS ActionTypes (
     action_type_id INT AUTO_INCREMENT PRIMARY KEY,
     action_type_name VARCHAR(100) NOT NULL UNIQUE
 );
@@ -134,7 +144,7 @@ VALUES ('visitor_registered'),
     ('user_deleted'),
     ('audit_log_viewed');
 
-CREATE TABLE AuditLog (
+CREATE TABLE IF NOT EXISTS AuditLog (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id INT, -- The user who initiated the action (can be NULL for system events)
@@ -152,7 +162,7 @@ CREATE TABLE AuditLog (
 
 DELIMITER $$
 -- Triggers to Enforce Soft Deletes on  VisitorCredentials & VisitorQRCode:
-CREATE TRIGGER soft_delete_visitor
+CREATE TRIGGER IF NOT EXISTS soft_delete_visitor
 BEFORE UPDATE ON Visitors
 FOR EACH ROW
 BEGIN
@@ -163,7 +173,7 @@ BEGIN
 END$$
 
 -- Trigger to calculate visit duration on insert
-CREATE TRIGGER calculate_visit_duration_insert
+CREATE TRIGGER IF NOT EXISTS calculate_visit_duration_insert
 BEFORE INSERT ON Visits
 FOR EACH ROW
 BEGIN
@@ -175,7 +185,7 @@ BEGIN
 END$$
 
 -- Trigger to calculate visit duration on update
-CREATE TRIGGER calculate_visit_duration_update
+CREATE TRIGGER IF NOT EXISTS calculate_visit_duration_update
 BEFORE UPDATE ON Visits
 FOR EACH ROW
 BEGIN
@@ -189,34 +199,34 @@ DELIMITER ;
 
 -- Create indexes to improve query performance
 -- Index on email for quick lookups of visitors by email
-CREATE INDEX idx_email ON Visitors(email);
+CREATE INDEX IF NOT EXISTS idx_email ON Visitors(email);
 -- Index on gender_id to speed up queries filtering by gender
-CREATE INDEX idx_gender_id ON Visitors(gender_id);
+CREATE INDEX IF NOT EXISTS idx_gender_id ON Visitors(gender_id);
 -- Index on visitor_id in VisitorCredentials for faster joins with Visitors table
-CREATE INDEX idx_visitor_id_credentials ON VisitorCredentials(visitor_id);
+CREATE INDEX IF NOT EXISTS idx_visitor_id_credentials ON VisitorCredentials(visitor_id);
 -- Index on username for quick access during user login
-CREATE INDEX idx_username ON VisitorCredentials(username);
+CREATE INDEX IF NOT EXISTS idx_username ON VisitorCredentials(username);
 -- Index on visitor_id in VisitorQRCode for faster joins with Visitors table
-CREATE INDEX idx_visitor_id_qr ON VisitorQRCode(visitor_id);
+CREATE INDEX IF NOT EXISTS idx_visitor_id_qr ON VisitorQRCode(visitor_id);
 -- Index on qr_code for quick lookups of QR codes
-CREATE INDEX idx_qr_code ON VisitorQRCode(qr_code);
+CREATE INDEX IF NOT EXISTS idx_qr_code ON VisitorQRCode(qr_code);
 -- Index on inmate_number for quick access to inmates by their number
-CREATE INDEX idx_inmate_number ON Inmates(inmate_number);
+CREATE INDEX IF NOT EXISTS idx_inmate_number ON Inmates(inmate_number);
 -- Index on visitor_id in Visits for faster joins with Visitors table
-CREATE INDEX idx_visitor_id_visits ON Visits(visitor_id);
+CREATE INDEX IF NOT EXISTS idx_visitor_id_visits ON Visits(visitor_id);
 -- Index on inmate_id in Visits for faster joins with Inmates table
-CREATE INDEX idx_inmate_id ON Visits(inmate_id);
+CREATE INDEX IF NOT EXISTS idx_inmate_id ON Visits(inmate_id);
 -- Index on visit_status for filtering visits by their status
-CREATE INDEX idx_visit_status ON Visits(visit_status);
+CREATE INDEX IF NOT EXISTS idx_visit_status ON Visits(visit_status);
 -- Index on visitor_id in Blacklist for faster lookups of blacklisted visitors
-CREATE INDEX idx_visitor_id_blacklist ON Blacklist(visitor_id);
+CREATE INDEX IF NOT EXISTS idx_visitor_id_blacklist ON Blacklist(visitor_id);
 -- Index on user_id in AuditLog for quick access to logs by user
-CREATE INDEX idx_user_id ON AuditLog(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_id ON AuditLog(user_id);
 -- Index on action_type_id in AuditLog for filtering logs by action type
-CREATE INDEX idx_action_type_id ON AuditLog(action_type_id);
+CREATE INDEX IF NOT EXISTS idx_action_type_id ON AuditLog(action_type_id);
 -- Index on visitor_id in AuditLog for filtering logs related to specific visitors
-CREATE INDEX idx_visitor_id_audit ON AuditLog(visitor_id);
+CREATE INDEX IF NOT EXISTS idx_visitor_id_audit ON AuditLog(visitor_id);
 -- Index on inmate_id in AuditLog for filtering logs related to specific inmates
-CREATE INDEX idx_inmate_id_audit ON AuditLog(inmate_id);
+CREATE INDEX IF NOT EXISTS idx_inmate_id_audit ON AuditLog(inmate_id);
 -- Index on visit_id in AuditLog for filtering logs related to specific visits
-CREATE INDEX idx_visit_id_audit ON AuditLog(visit_id);
+CREATE INDEX IF NOT EXISTS idx_visit_id_audit ON AuditLog(visit_id);
