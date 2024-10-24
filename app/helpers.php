@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/class/user.class.php';
+session_start();
 // The clean_input function is used to sanitize user input.
 function clean_input($input)
 {
@@ -15,16 +16,19 @@ function auth()
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $username = clean_input(($_POST['username']));
         $password = clean_input($_POST['password']);
-        session_start();
-        if ($accountObj->login($username, $password)) {
-            $data = $accountObj->fetch($username);
-            $_SESSION['account'] = $data;
-            header('location: /resources/visitor/accDashboard.php');
+        if (!empty($username) || !empty($password)) {
+            session_start();
+            if ($accountObj->login($username, $password)) {
+                $data = $accountObj->fetch($username);
+                $_SESSION['account'] = $data;
+                header('location: /resources/visitor/accDashboard.php');
+            } else {
+                $loginErr = 'Invalid username/password';
+            }
         } else {
-            $loginErr = 'Invalid username/password';
+            $loginErr = 'Please fill in all fields';
         }
     } else {
-        session_start();
         if (isset($_SESSION['account'])) {
             if ($_SESSION['account']['is_staff']) {
                 header('location: /resources/admin/mDashboard.php');
@@ -41,8 +45,13 @@ function logout()
     session_destroy();
     header('Location: /public/index.php');
 }
+function login()
+{
+    session_start();
+}
 
 function redirect($url)
 {
     header('Location: ' . $url);
 }
+

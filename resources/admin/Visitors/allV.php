@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,8 @@
             font-family: 'Quicksand', sans-serif;
         }
 
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             height: 100%;
@@ -127,11 +129,12 @@
             border-collapse: collapse;
             margin-top: 20px;
             background-color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px;
             text-align: left;
             border-bottom: 1px solid #ddd;
@@ -198,60 +201,38 @@
         }
 
         .view-details {
-            background-color: #B26D31; /* Set the background color to orange */
+            background-color: #B26D31;
+            /* Set the background color to orange */
             color: white;
             border: none;
             padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-            width: 100%; /* Full width */
-            margin-bottom: 5px; /* Space between buttons */
+            width: 100%;
+            /* Full width */
+            margin-bottom: 5px;
+            /* Space between buttons */
         }
 
         .add-blacklist {
-        background-color: #8B0000; /* Set the background color to red */
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        width: 100%; /* Full width */
+            background-color: #8B0000;
+            /* Set the background color to red */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            /* Full width */
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <img src="../ZCJ-logo.png" alt="ZCJ Logo">
-            <h3>ZCJ Visitor Management System</h3>
-            <a href="../Account/mDashboard.html">Dashboard</a>
-            <a href="javascript:void(0);" class="toggle-visitors">Visitors <span class="arrow">&#9654;</span></a>
-            <div class="submenu submenu-visitors">
-                <a href="../Visitors/allV.html">Registered Visitors</a>
-                <a href="../Visitors/pendingV.html">Pending Visitors</a>
-                <a href="../Visitors/blacklistV.html">Blacklisted Visitors</a>
-            </div>
-            <a href="javascript:void(0);" class="toggle-visitlogs">Visit Logs <span class="arrow">&#9654;</span></a>
-            <div class="submenu submenu-visitlogs">
-                <a href="../Visit Logs/vpending.html">Pending Visits</a>
-                <a href="../Visit Logs/currentV.html">Ongoing Visits</a>
-                <a href="../Visit Logs/historyV.html">Completed Visits</a>
-            </div>
-            <a href="javascript:void(0);" class="toggle-reports">Reports and Analytics <span class="arrow">&#9654;</span></a>
-            <div class="submenu submenu-reports">
-                <a href="../Reports/dailyV.html">Daily Visitor</a>
-                <a href="../Reports/weeklyV.html">Weekly Visitor</a>
-                <a href="../Reports/monthlyV.html">Monthly Visitor</a>
-            </div>
-            <a href="../Account/mSettings.html">Settings</a>
-            <a href="../Login/login.html">Logout</a>
-            <div class="bottom-section">
-                <br><br><br><br><br><br><br><br><br><br><br><br>
-                <h3>Moderator</h3>
-            </div>
-        </div>
-
+        <?php
+        include __DIR__ . '../../../includes/sidebarAdmin.php';
+        ?>
         <!-- Main Content -->
         <div class="main-content">
             <h2>REGISTERED VISITORS</h2>
@@ -328,7 +309,7 @@
                 <div class="popup-content">
                     <span class="close-btn" id="close-popup">&times;</span>
                     <h3>Visitor Details</h3>
-                    
+
                     <!-- QR Code Section -->
                     <div class="section-heading">QR Code</div>
                     <img src="../QR.svg" alt="Visitor QR Code" class="qr-code" id="visitor-qr-code">
@@ -346,51 +327,51 @@
         const submenuVisitors = document.querySelector('.submenu-visitors');
         const submenuVisitLogs = document.querySelector('.submenu-visitlogs');
         const submenuReports = document.querySelector('.submenu-reports');
-        
+
         document.querySelector('.toggle-visitors').addEventListener('click', () => {
             submenuVisitors.style.display = submenuVisitors.style.display === 'block' ? 'none' : 'block';
             document.querySelector('.toggle-visitors .arrow').style.transform = submenuVisitors.style.display === 'block' ? 'rotate(90deg)' : 'rotate(0deg)';
         });
-    
+
         document.querySelector('.toggle-visitlogs').addEventListener('click', () => {
             submenuVisitLogs.style.display = submenuVisitLogs.style.display === 'block' ? 'none' : 'block';
             document.querySelector('.toggle-visitlogs .arrow').style.transform = submenuVisitLogs.style.display === 'block' ? 'rotate(90deg)' : 'rotate(0deg)';
         });
-    
+
         document.querySelector('.toggle-reports').addEventListener('click', () => {
             submenuReports.style.display = submenuReports.style.display === 'block' ? 'none' : 'block';
             document.querySelector('.toggle-reports .arrow').style.transform = submenuReports.style.display === 'block' ? 'rotate(90deg)' : 'rotate(0deg)';
         });
-    
+
         // Sorting functionality
         const sortSelect = document.getElementById('sort-select');
         const visitorsTableBody = document.querySelector('#visitors-table tbody');
-    
+
         sortSelect.addEventListener('change', () => {
             const rows = Array.from(visitorsTableBody.rows);
             const sortOrder = sortSelect.value === 'newest';
-    
+
             rows.sort((a, b) => {
                 const idA = parseInt(a.cells[0].textContent);
                 const idB = parseInt(b.cells[0].textContent);
                 return sortOrder ? idB - idA : idA - idB;
             });
-    
+
             rows.forEach(row => visitorsTableBody.appendChild(row)); // Re-append sorted rows
         });
-    
+
         // Search functionality
         const searchInput = document.getElementById('search-input');
-    
+
         searchInput.addEventListener('keyup', () => {
             const filter = searchInput.value.toLowerCase();
             const rows = visitorsTableBody.getElementsByTagName('tr');
-    
+
             Array.from(rows).forEach(row => {
                 const cells = row.getElementsByTagName('td');
                 const fullName = cells[1] ? cells[1].textContent.toLowerCase() : '';
                 const username = cells[2] ? cells[2].textContent.toLowerCase() : '';
-    
+
                 // Check if either the full name or username contains the search term
                 if (fullName.includes(filter) || username.includes(filter)) {
                     row.style.display = ''; // Show the row
@@ -399,39 +380,40 @@
                 }
             });
         });
-    
+
         // Popup functionality
         const viewDetailsButtons = document.querySelectorAll('.view-details');
         const popup = document.getElementById('popup');
         const closeBtn = document.getElementById('close-popup');
-    
+
         viewDetailsButtons.forEach(button => {
             button.addEventListener('click', (e) => {
                 const visitorId = e.target.getAttribute('data-id');
-    
+
                 const qrCodeImage = document.getElementById('visitor-qr-code');
                 const idPhotoImage = document.getElementById('visitor-id-photo');
-                
+
                 // Update QR code and ID photo src
                 qrCodeImage.src = `path_to_qr_code_image_${visitorId}.png`; // Replace with the correct QR code image path
                 idPhotoImage.src = `path_to_id_photo_${visitorId}.png`; // Replace with the correct ID photo path
-    
+
                 // Show the popup
                 popup.style.display = 'flex';
             });
         });
-    
+
         closeBtn.addEventListener('click', () => {
             popup.style.display = 'none';
         });
-    
+
         window.addEventListener('click', (e) => {
             if (e.target == popup) {
                 popup.style.display = 'none';
             }
         });
     </script>
-    
-    
+
+
 </body>
+
 </html>

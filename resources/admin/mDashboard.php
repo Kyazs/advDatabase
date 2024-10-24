@@ -1,3 +1,7 @@
+
+<?php
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -168,40 +172,9 @@
 <body>
     <div class="container">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <img src="../../assets/images//ZCJ-logo.png" alt="ZCJ Logo">
-            <h3>ZCJ Visitor Management System</h3>
-            <a href="../admin/mDashboard.php">Dashboard</a>
-
-            <a href="javascript:void(0);" class="toggle-visitors">Visitors <span class="arrow">&#9654;</span></a>
-            <div class="submenu submenu-visitors">
-                <a href="../admin/Visitors/allV.php">Registered Visitors</a>
-                <a href="../admin/Visitors/pendingV.php">Pending Visitors</a>
-                <a href="../admin/Visitors/blacklistV.php">Blacklisted Visitors</a>
-            </div>
-
-            <a href="javascript:void(0);" class="toggle-visitlogs">Visit Logs <span class="arrow">&#9654;</span></a>
-            <div class="submenu submenu-visitlogs">
-                <a href="../admin/Visit Logs/vpending.php">Pending Visits</a>
-                <a href="../admin/Visit Logs/currentV.php">Ongoing Visits</a>
-                <a href="../admin/Visit Logs/historyV.php">Completed Visits</a>
-            </div>
-
-            <a href="javascript:void(0);" class="toggle-reports">Reports and Analytics <span class="arrow">&#9654;</span></a>
-            <div class="submenu submenu-reports">
-                <a href="../admin/Reports/dailyV.php">Daily Visitor</a>
-                <a href="../admin/Reports/weeklyV.php">Weekly Visitor</a>
-                <a href="../admin/Reports/monthlyV.php">Monthly Visitor</a>
-            </div>
-
-            <a href="../admin/mSettings.php">Settings</a>
-            <a href="../../public/index.php">Logout</a>
-
-            <div class="bottom-section">
-                <br><br><br><br><br><br><br><br><br><br><br><br>
-                <h3>Moderator</h3>
-            </div>
-        </div>
+<?php
+include '../includes/sidebarAdmin.php';
+?>
 
         <!-- Main Content -->
         <div class="main-content">

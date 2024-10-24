@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../app/validation/register.php';
+require_once BASE_PATH . '/app/validation/register.php';
 
 ?>
 
@@ -15,24 +15,15 @@ require_once __DIR__ . '/../../app/validation/register.php';
 </head>
 
 <body>
-
-    <div class="navbar">
-        <div class="navbar-left">
-            <img src="../ZCJ-logo.png" alt="ZCJ Logo">
-            ZCJ Visitor Management System
-        </div>
-        <div class="navbar-right">
-            <a href="../Landing Page/landingPage.html">Home</a>
-            <a href="#">Contact Us</a>
-            <a href="#">About Us</a>
-        </div>
-    </div>
+    <?php
+    include BASE_PATH . '/resources/includes/header.php';
+    ?>
 
     <h2>Visitor Registration</h2>
 
     <div class="form-container">
         <h3>Personal Information</h3>
-        <form action="../../app/validation/register.php" method="POST">
+        <form action="" method="POST">
 
             <label for="firstName">First Name <span class="error">*</span></label>
             <input type="text" id="firstName" name="firstName" placeholder="First Name" value="<?= $first_name ?>">
@@ -65,7 +56,7 @@ require_once __DIR__ . '/../../app/validation/register.php';
 
             <label for="gender">Gender <span class="error">*</span></label>
             <select name="gender" id="gender">
-                <option value="" disabled <?= $gender == '' ? 'selected' : '' ?>>Select</option>
+                <option value="" disabled selected>Select</option>
                 <option value="1" <?= $gender == '1' ? 'selected' : '' ?>>Male</option>
                 <option value="2" <?= $gender == '2' ? 'selected' : '' ?>>Female</option>
                 <option value="3" <?= $gender == '3' ? 'selected' : '' ?>>Non-Binary</option>
@@ -178,7 +169,7 @@ require_once __DIR__ . '/../../app/validation/register.php';
             </div>
 
             <div class="button-group">
-                <a href="/public/index.php" class="button">Back</a>
+                <a href="/" class="button">Back</a>
                 <button type="submit" class="button">Create</button>
             </div>
 

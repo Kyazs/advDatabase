@@ -1,7 +1,7 @@
 <?php
 ob_start();
-require_once __DIR__ . '/../class/user.class.php';
-require_once __DIR__ . '/../helpers.php';
+require_once BASE_PATH . '/app/class/user.class.php';
+require_once BASE_PATH . '/app/helpers.php';
 $conPassword = $terms = $username = $password = $visitor_id = $first_name = $last_name = $email = $contact_number = $date_of_birth = $province = $barangay = $street = $city = $zip = $id_document_path = $id_type = $registration_date = $gender = $country = '';
 
 $error_terms = $error_password = $error_id_type = $usernameExists = $emailExists = $contactExists = $error_username = $error_visitor_id = $error_first_name = $error_last_name = $error_email = $error_contact_number = $error_date_of_birth = $error_address_street = $error_address_city = $error_address_state = $error_address_zip = $error_id_document_path = $error_registration_date = $error_is_verified = $error_gender = $error_country = '';

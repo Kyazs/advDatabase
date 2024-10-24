@@ -1,6 +1,7 @@
 <?php
+require_once '../../config.php';
 require_once '../../app/helpers.php';
-auth();
+// auth();
 ?>
 
 <!DOCTYPE html> 
@@ -116,17 +117,9 @@ auth();
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-        <img src="../../assets/images/ZCJ-logo.png" alt="ZCJ Logo">
-            <h3>ZCJ Visitor Management System</h3>
-            <a href="../../resources/visitor/accDashboard.php">Dashboard</a>
-            <a href="../../resources/visitor/accQR.php">QR Code</a>
-            <a href="../../resources/visitor/accProfile.php">Profile</a>
-            <a href="../../resources/visitor/accContact.php">Contact Us</a>
-            <a href="../../resources/visitor/accAbout.php">About Us</a>
-            <a href="../../app/validation/logout.php">Logout</a>
-
-        </div>
+<?php
+require_once BASE_PATH . '/resources/includes/sidebarVisitor.php';
+?>
         
         <div class="main-content">
             <h2>DASHBOARD</h2>

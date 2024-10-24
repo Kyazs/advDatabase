@@ -97,7 +97,7 @@ class User
 
             // Execute the credentials insert query
             if ($stmt2->execute()) {
-                header('Location: ../../public/login.php');
+                header('Location: /login');
                 exit();
             } else {
                 echo "Error creating user credentials: ";
